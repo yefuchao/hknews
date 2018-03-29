@@ -1,4 +1,5 @@
 ﻿using Fizzler.Systems.HtmlAgilityPack;
+using hkexnews.Model;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -9,25 +10,61 @@ using System.Threading.Tasks;
 
 namespace hkexnews
 {
+
     public class ParseHTML
     {
-        const string _viewState = "MFwXjMuyVRW4JfBcOeKrytcYpPvgNYCSDdIrFOdMqSYQNZitBloXYJG9pPSzQCChcxAEcwIa1BKjT69bTuKsd2RT3gSdQ+feXZED74vXKO9TNQ+a7+b/UDZ+UoJIjqHvSXCosuNgieJdRVbMnzJwOISK5Z+xHZ+ieASSwGAihr2N7jQnYAPryq7ZsWkhRoOmES7mqA==";
-        const string _viewStateGenerator = "EC4ACD6F";
-        const string _eventvalidation = "W2oSjvaHIRMGzTpgSbBWJZo9zgbj8nNYZtuFbyNJepjt5Tr/HfbXyuioWwRQiDSNfpclYyUbu1868XlzflZMm0ZM1sM37h2udk25xUXtErZrwZoZmMeLeOQlrmkfSTP/UzN6bJ3b1X6cUjf8aTZHn9R0sHlbeTGGAhxzPHHtOOIFf0ny/vbC5BDKARZw9jeDKBRDs77c7L5Khw8ikYkncF/4dTwZTe/7/FE5pj9lB1OQakuEDVKJ0nEYm8WQC4LcNGy9M3GMI2v3OrQ+SzOtfgFmTf56v1NQnqyWRFiXLkS/IzYL/vCIa7OJrEXfj6GYgWJ42GdUyGotKsGcSvlbEf4NFgfXsFSvvcdfn0dWNUHIVKWLj3tit8DKJwuxgBCH7KlILWM82iDvZxFIpzBslAV5nyqloL+kWoPcKRl5uCMAy/rb53D65KNYgiPjjPrMPGa3G/bkaNBoqWG3gIMrE8VZ2jIceufi5NAVq5id/coWMZTeIzrDgcrg+W5RdNylo3DPuyqAw6n7UhhSIGSD61B6/mLxdgVa0lsWlIQphEEP4oftqmepXYidoROxSzQ3J0u0sIrZeiGB2O+RRt1ysLM9Fcw2W14mF45hfMSPBk84pW17bgb57sCHaC00/agO7yg8YbBkWbDywgY/iXe99GDHVMPf/apd+p0LBRKU1xrJJmai535hcqSHxAAz1yJIvG0PteYzkqO9+IiTrURC1P4asbOfUPkxCW/QSa4SKQRqCjYnh/hMF8idCFL45lH9/mZyAaNUN5dWxeNQu9dpYz48T8LewE+JKixihhjcILpTAeOvgB9lUOPFYNnYWh6tsSGMs/SLemWWNZt9iI3c18qNtiO/1LqwfGCGEbnlMIihgJ3hkbmZe5yJl2BV9OROR9oWdKns86IH4f2mB8Yp9snX+r8eBjKDNHX64dvCCBTq3OjjbMBTY3iHdquQHZXAwtb3SxUPttZJqqTk1AuuGn2Lcp6b76QjR6KLas0t75Ca59gdGdorrZ/SfIRDgIoT89jfrF1uK3+w8B+ou3V+DqzmvgkQYqIFSdaNkiq53chUzRjjkQR5cS2jFfLLVw8JjB6zQKmtxz5dqEz1+yXfaLtcjCEfJxJnQrGgaNoyfkVci2tWE7w1rERs4FB6p9Sk/lEZXE3nV/Bgq4+niEnI5Xg1LCo=";
-        const string _today = "20180327";
-        const string _sortBy = "";
-        const string _alertMsg = "";
-        const string _ddlShareholdingDay = "22";
-        const string _ddlShareholdingMonth = "03";
-        const string _ddlShareholdingYear = "2018";
-        const string _btnSearch_x = "36";
-        const string _btnSearch_y = "16";
+        HKNewsContext db;
+
+        public ParseHTML()
+        {
+            db = new HKNewsContext();
+        }
+
+        static string _viewState = "";
+        static string _viewStateGenerator = "EC4ACD6F";
+        static string _eventvalidation = "";
+        static string _today = "20180329";
+        static string _sortBy = "";
+        static string _alertMsg = "";
+        static string _ddlShareholdingDay = "22";
+        static string _ddlShareholdingMonth = "03";
+        static string _ddlShareholdingYear = "2018";
+
+        const string url = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+
+        public void GetHtml()
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+
+                var htmlDoc = web.Load(url);
+
+                var nodes = htmlDoc.DocumentNode.SelectNodes("//input");
+
+                _viewState = nodes[0].Attributes["value"].Value;
+
+                _eventvalidation = nodes[2].Attributes["value"].Value;
+
+                Console.WriteLine("done");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         public async Task SaveData()
         {
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://www.hkexnews.hk");
+
+                var random = new Random();
+
+                var _x = random.Next(22, 33).ToString();
+                var _y = random.Next(11, 17).ToString();
 
                 var content = new FormUrlEncodedContent(new[] {
                     new KeyValuePair<string,string>("__VIEWSTATE",_viewState),
@@ -39,8 +76,8 @@ namespace hkexnews
                     new KeyValuePair<string,string>("ddlShareholdingDay",_ddlShareholdingDay),
                     new KeyValuePair<string, string>("ddlShareholdingMonth",_ddlShareholdingMonth),
                     new KeyValuePair<string, string>("ddlShareholdingYear",_ddlShareholdingYear),
-                    new KeyValuePair<string, string>("btnSearch.x",_btnSearch_x),
-                    new KeyValuePair<string, string>("btnSearch.y",_btnSearch_y),
+                    new KeyValuePair<string, string>("btnSearch.x",_x),
+                    new KeyValuePair<string, string>("btnSearch.y",_y),
                 });
 
                 var result = await client.PostAsync("/sdw/search/mutualmarket_c.aspx?t=hk", content);
@@ -51,26 +88,67 @@ namespace hkexnews
 
                 doc.Load(response);
 
+                var nodes = doc.DocumentNode.SelectNodes("//input");
+
+                _viewState = nodes[0].Attributes["value"].Value;
+
+                _eventvalidation = nodes[2].Attributes["value"].Value;
+
+                var date = doc.DocumentNode.SelectNodes("//body/form/div/div")[0].InnerText;
+
+                date = Regex.Replace(date, "\\s", "");
+
+                var index = date.IndexOf(":");
+
+                date = date.Substring(index + 1);
+
                 var t = doc.DocumentNode.QuerySelectorAll(".row0 .arial12black");
+
+                StringBuilder sb = new StringBuilder();
+
                 foreach (var item in t)
                 {
-                    var x = item;
+                    sb.Append(Regex.Replace(item.InnerText, "\\s", "") + ";");
                 }
 
-                #region
-                //var trs = doc.DocumentNode.SelectNodes("/html[1]/body[1]/div[5]/table[1]/tr");
+                var x = doc.DocumentNode.QuerySelectorAll(".row1 .arial12black");
 
-                //for (int i = 2; i < trs.Count; i++)
-                //{
-                //    var str = trs[i].InnerHtml;
-                //    var after = Regex.Replace(str, "\\s", "");
+                foreach (var item in t)
+                {
+                    sb.Append(Regex.Replace(item.InnerText, "\\s", "") + ";");
+                }
 
-                //    var t = Regex.Matches(after, "");
+                var array = sb.ToString().Split(";");
 
-                //}
-                #endregion
+                var postion = 0;
 
-                Console.WriteLine("???");
+                StringBuilder builder = new StringBuilder();
+
+                while (postion < array.Length - 1)
+                {
+                    Records record = new Records
+                    {
+                        Code = array[postion],
+                        Date = date,
+                        Stock_Name = array[postion + 1],
+                        Rate = array[postion + 3],
+                        Num = array[postion + 2]
+                    };
+
+                    db.Records.Add(record);
+
+                    builder.Append("id:" + array[postion] + ",name:" + array[postion + 1] + ",num:" + array[postion + 2] + ",rate:" + array[postion + 3] + ";");
+                    postion += 4;
+                }
+
+                 db.SaveChanges();
+
+                builder.Append("}");
+
+                Console.WriteLine(builder.ToString());
+
+                Console.WriteLine("done");
+
             }
         }
     }
