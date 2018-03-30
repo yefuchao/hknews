@@ -8,32 +8,24 @@ namespace hkexnews
     {
         static void Main(string[] args)
         {
-            try
-            {
-                ParseHTML parse = new ParseHTML();
 
-                HKNewsContext db = new HKNewsContext();
+            //TODO 实现自动增长一天
+            //TODO 判断返回的当天是否已存在
 
-                db.Records.Add(new Records
-                {
-                    Code = "11",
-                    Date = "1111",
-                    Stock_Name = "222",
-                    Num = "11",
-                    Rate = "2"
-                });
+            //TODO 实现每天自动抓取前一天的数据
 
-                db.SaveChanges();
-            }
-            catch (Exception ex)
-            {
+            //TODO 订阅模式
+            //TODO 生成EXCEL，发送到订阅者邮箱
 
-                throw ex;
-            }
+            //TODO 重构 功能模块分开
 
-            //parse.GetHtml();
+            ParseHTML parse = new ParseHTML();
 
-            //Task.Run(async () => await parse.SaveData());
+            parse.GetHtml();
+
+        
+            Task.Run(async () => await parse.SaveData("02"));
+
 
             Console.WriteLine("Hello World!");
 

@@ -23,14 +23,16 @@ namespace hkexnews
         static string _viewState = "";
         static string _viewStateGenerator = "EC4ACD6F";
         static string _eventvalidation = "";
-        static string _today = "20180329";
+        static string _today = "20180330";
         static string _sortBy = "";
         static string _alertMsg = "";
-        static string _ddlShareholdingDay = "22";
-        static string _ddlShareholdingMonth = "03";
-        static string _ddlShareholdingYear = "2018";
+        static string _ddlShareholdingDay = "20";
+        static string _ddlShareholdingMonth = "04";
+        static string _ddlShareholdingYear = "2017";
 
         const string url = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+
+
 
         public void GetHtml()
         {
@@ -55,8 +57,10 @@ namespace hkexnews
             }
         }
 
-        public async Task SaveData()
+        public async Task SaveData(string day)
         {
+            _ddlShareholdingDay = day;
+
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://www.hkexnews.hk");
@@ -141,7 +145,7 @@ namespace hkexnews
                     postion += 4;
                 }
 
-                 db.SaveChanges();
+                db.SaveChanges();
 
                 builder.Append("}");
 

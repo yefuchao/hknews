@@ -34,7 +34,7 @@ namespace hkexnews.Model
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=127.0.0.1;Initial Catalog=hknews;User id =sa;password=yefuchao0531;");
+            optionsBuilder.UseSqlServer(@"Server=sql_server_name_or_address;Initial Catalog=hknews;User id =sa;password=your_password;");
         }
     }
 }
