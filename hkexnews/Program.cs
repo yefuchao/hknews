@@ -1,4 +1,5 @@
-﻿using hkexnews.Model;
+﻿using Core;
+using hkexnews.Model;
 using System;
 using System.Threading.Tasks;
 
@@ -9,27 +10,34 @@ namespace hkexnews
         static void Main(string[] args)
         {
 
-            //TODO 实现自动增长一天
-            //TODO 判断返回的当天是否已存在
+            HTMLService service = new HTMLService();
 
-            //TODO 实现每天自动抓取前一天的数据
+            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
 
-            //TODO 订阅模式
-            //TODO 生成EXCEL，发送到订阅者邮箱
+            var today = service.GetTodayPage(todayurl);
 
-            //TODO 重构 功能模块分开
+            var data = service.GetStateAndValidation(today);
 
-            ParseHTML parse = new ParseHTML();
+            string _viewState = data.Item1;
+            string _eventvalidation = data.Item2;
 
-            parse.GetHtml();
 
-        
-            Task.Run(async () => await parse.SaveData("02"));
+            //Task.Run(async () => await parse.SaveData("02"));
 
 
             Console.WriteLine("Hello World!");
 
             Console.ReadLine();
         }
+
+        //TODO 实现自动增长一天
+        //TODO 判断返回的当天是否已存在
+
+        //TODO 实现每天自动抓取前一天的数据
+
+        //TODO 订阅模式
+        //TODO 生成EXCEL，发送到订阅者邮箱
+
+        //TODO 重构 功能模块分开
     }
 }
