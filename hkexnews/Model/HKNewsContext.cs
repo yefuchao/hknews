@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 namespace Infrastructure
 {
     class HKNewsContext : DbContext
@@ -38,7 +37,7 @@ namespace Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=your_database_host;Initial Catalog=hknews;User ID=sa;password=your_password;");
+            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-MI4FF793;Initial Catalog=hknews;User ID=sa;password=123456;");
         }
     }
 }

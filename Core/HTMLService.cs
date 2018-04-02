@@ -57,24 +57,16 @@ namespace Core
         {
             doc.Load(stream);
 
-            var nodes = doc.DocumentNode.SelectNodes("//input");
-
-            _viewState = nodes[0].Attributes["value"].Value;
-
-            _eventvalidation = nodes[2].Attributes["value"].Value;
-
-            return new Tuple<string, string>(_viewState, _eventvalidation);
+            return GetStateAndValidation(doc);
         }
 
         /// <summary>
         /// 获取日期
         /// </summary>
-        /// <param name="stream">html数据流</param>
+        /// <param name="doc"></param>
         /// <returns></returns>
-        public string GetDate(Stream stream)
+        public string GetDate(HtmlDocument doc)
         {
-            doc.Load(stream);
-
             var date = doc.DocumentNode.SelectNodes("//body/form/div/div")[0].InnerText;
 
             date = Regex.Replace(date, "\\s", "");
@@ -87,14 +79,24 @@ namespace Core
         }
 
         /// <summary>
-        /// 获取股票数据
+        /// 获取日期
         /// </summary>
         /// <param name="stream">html数据流</param>
         /// <returns></returns>
-        public Tuple<string, string> GetStockData(Stream stream)
+        public string GetDate(Stream stream)
         {
             doc.Load(stream);
 
+            return GetDate(doc);
+        }
+
+        /// <summary>
+        /// 获取股票数据
+        /// </summary>
+        /// <param name="stream">html对象</param>
+        /// <returns></returns>
+        public Tuple<string, string> GetStockData(HtmlDocument doc)
+        {
             StringBuilder sb = new StringBuilder();
 
             var row0 = doc.DocumentNode.QuerySelectorAll(".row0 .arial12black");
@@ -120,6 +122,18 @@ namespace Core
             date = date.Substring(index + 1);
 
             return new Tuple<string, string>(date, sb.ToString());
+        }
+
+        /// <summary>
+        /// 获取股票数据
+        /// </summary>
+        /// <param name="stream">html数据流</param>
+        /// <returns></returns>
+        public Tuple<string, string> GetStockData(Stream stream)
+        {
+            doc.Load(stream);
+
+            return GetStockData(doc);
         }
 
         /// <summary>

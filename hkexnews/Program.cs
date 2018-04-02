@@ -15,6 +15,39 @@ namespace hkexnews
         static void Main(string[] args)
         {
 
+        }
+
+        public static void SaveCurrentPage()
+        {
+            HTMLService service = new HTMLService();
+
+            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+
+            var today = service.GetTodayPage(todayurl);
+
+            var data = service.GetStockData(today);
+
+            var json = service.ConvertToJson(data.Item2, data.Item1);
+
+            using (var db = new HKNewsContext())
+            {
+                if (db.DateSaved.Where(p => p.Date == data.Item1).Count() == 0)
+                {
+                    var list = JsonConvert.DeserializeObject<List<Records>>(json);
+
+                    db.Records.AddRange(list);
+
+                    db.DateSaved.Add(new Model.DateSaved { Date = data.Item1 });
+
+                    db.SaveChanges();
+                }
+            }
+
+            Console.WriteLine(data.Item1 + "完成");
+        }
+
+        public static void SaveHistoryData()
+        {
             HTMLService service = new HTMLService();
 
             const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
@@ -52,7 +85,7 @@ namespace hkexnews
                         }
                     }
 
-                    Console.WriteLine(startDate.ToString("yyyy年MM月dd日") + "完成");
+                    Console.WriteLine(data.Item1 + "完成");
                 });
 
                 Task.Delay(1000);
@@ -65,8 +98,17 @@ namespace hkexnews
             Console.ReadLine();
         }
 
-        //TODO 实现每天自动抓取前一天的数据
+        public static void GenereateExcelByDay(DateTime date)
+        {
 
+        }
+
+        public static void GenerateExcelByCode(string Code)
+        {
+            
+        }
+
+        //TODO 实现每天自动抓取前一天的数据
         //TODO 订阅模式
         //TODO 生成EXCEL，发送到订阅者邮箱
     }
