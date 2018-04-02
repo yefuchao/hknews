@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "hkexnews", "hkexnews\hkexnews.csproj", "{2D10A0AA-B641-40CE-957A-E924690B97A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{B59ADF27-526C-4462-A10D-C94F53295345}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{B59ADF27-526C-4462-A10D-C94F53295345}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

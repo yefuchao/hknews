@@ -1,13 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using hkexnews.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace hkexnews.Model
+
+namespace Infrastructure
 {
     class HKNewsContext : DbContext
     {
         public DbSet<Records> Records { get; set; }
+
+        public DbSet<DateSaved> DateSaved { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +38,7 @@ namespace hkexnews.Model
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=sql_server_name_or_ip_address;Initial Catalog=hknews;User id =sa;password=your_password;");
+            optionsBuilder.UseSqlServer(@"Data Source=your_database_host;Initial Catalog=hknews;User ID=sa;password=your_password;");
         }
     }
 }

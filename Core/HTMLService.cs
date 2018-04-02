@@ -91,7 +91,7 @@ namespace Core
         /// </summary>
         /// <param name="stream">html数据流</param>
         /// <returns></returns>
-        public string GetStockData(Stream stream)
+        public Tuple<string, string> GetStockData(Stream stream)
         {
             doc.Load(stream);
 
@@ -111,7 +111,15 @@ namespace Core
                 sb.Append(Regex.Replace(item.InnerText, "\\s", "") + ";");
             }
 
-            return sb.ToString();
+            var date = doc.DocumentNode.SelectNodes("//body/form/div/div")[0].InnerText;
+
+            date = Regex.Replace(date, "\\s", "");
+
+            var index = date.IndexOf(":");
+
+            date = date.Substring(index + 1);
+
+            return new Tuple<string, string>(date, sb.ToString());
         }
 
         /// <summary>
@@ -128,16 +136,16 @@ namespace Core
 
             var index = 0;
 
-            sb.Append("{");
+            sb.Append("[");
 
-            while (index < array.Length)
+            while (index < array.Length - 1)
             {
                 sb.Append("{");
-                sb.Append("Code:" + Regex.Replace(array[index], "\\s", "") + ",");
-                sb.Append("Stock_Name:" + Regex.Replace(array[index + 1], "\\s", "") + ",");
-                sb.Append("Num:" + Regex.Replace(Regex.Replace(array[index + 2], "\\s", ""), ",", "") + ",");
-                sb.Append("Rate:" + Regex.Replace(array[index + 3], "\\s", "") + ",");
-                sb.Append("Date:" + date);
+                sb.Append("Code:\"" + Regex.Replace(array[index], "\\s", "") + "\",");
+                sb.Append("Stock_Name:\"" + Regex.Replace(array[index + 1], "\\s", "") + "\",");
+                sb.Append("Num:\"" + Regex.Replace(Regex.Replace(array[index + 2], "\\s", ""), ",", "") + "\",");
+                sb.Append("Rate:\"" + Regex.Replace(array[index + 3], "\\s", "") + "\",");
+                sb.Append("Date:\"" + date + "\"");
                 sb.Append("}");
 
                 index += 4;
@@ -148,7 +156,7 @@ namespace Core
                 }
             }
 
-            sb.Append("}");
+            sb.Append("]");
 
             return sb.ToString();
         }
@@ -175,9 +183,13 @@ namespace Core
         public async Task<Stream> GetHistoryPage(string viewState, string eventvalidation, DateTime date)
         {
             _ddlShareholdingYear = date.Year.ToString();
-            _ddlShareholdingMonth = date.Month.ToString();
-            _ddlShareholdingDay = date.Day.ToString();
+
+            _ddlShareholdingMonth = date.Month < 10 ? "0" + date.Month.ToString() : date.Month.ToString();
+
+            _ddlShareholdingDay = date.Day < 10 ? "0" + date.Day.ToString() : date.Day.ToString();
+
             _viewState = viewState;
+
             _eventvalidation = eventvalidation;
 
             using (var client = new HttpClient())
@@ -206,6 +218,13 @@ namespace Core
                 var result = await client.PostAsync("/sdw/search/mutualmarket_c.aspx?t=hk", content);
 
                 var response = await result.Content.ReadAsStreamAsync();
+
+                //var data = GetStockData(response);
+
+                //var page_date = GetDate(response);
+
+                //var json = ConvertToJson(data, page_date);
+
 
                 return response;
             }

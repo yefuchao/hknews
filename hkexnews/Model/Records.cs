@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace hkexnews.Model
+namespace Infrastructure
 {
-    public class Records
+    class Records
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
