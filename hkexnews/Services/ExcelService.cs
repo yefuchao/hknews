@@ -40,7 +40,7 @@ namespace hkexnews.Services
             workbook = new HSSFWorkbook();
             InitializeWorkbook();
             MemoryStream ms = new MemoryStream();
-            ISheet sheet = workbook.CreateSheet();
+            ISheet sheet = workbook.CreateSheet(SourceTable.TableName);
             var headerRow = sheet.CreateRow(0);
 
             foreach (DataColumn column in SourceTable.Columns)
@@ -72,6 +72,67 @@ namespace hkexnews.Services
             workbook = null;
 
             return ms;
+        }
+
+        public static Stream RenderDataSetToExcel(DataSet DbSet)
+        {
+            workbook = new HSSFWorkbook();
+            InitializeWorkbook();
+            MemoryStream ms = new MemoryStream();
+            foreach (DataTable Table in DbSet.Tables)
+            {
+                ISheet sheet = workbook.CreateSheet(Table.TableName);
+                var headerRow = sheet.CreateRow(0);
+
+                foreach (DataColumn column in Table.Columns)
+                {
+                    var cell = headerRow.CreateCell(column.Ordinal); //.SetCellValue(column.ColumnName);
+                    cell.SetCellValue(column.ColumnName);
+                }
+
+                int rowIndex = 1;
+
+                foreach (DataRow row in Table.Rows)
+                {
+                    IRow dataRow = sheet.CreateRow(rowIndex);
+
+                    foreach (DataColumn column in Table.Columns)
+                    {
+                        dataRow.CreateCell(column.Ordinal).SetCellValue(row[column].ToString());
+                    }
+
+                    rowIndex++;
+                }
+            }
+
+            workbook.Write(ms);
+            ms.Flush();
+            ms.Position = 0;
+
+            workbook = null;
+            return ms;
+        }
+
+        public static byte[] StreamToByteArray(Stream s)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                s.CopyTo(ms);
+
+                return ms.ToArray();
+            }
+        }
+
+        public static void WriteStreamToFile(byte[] data, string FileName)
+        {
+            FileStream fs = new FileStream(FileName, FileMode.Create, FileAccess.Write);
+
+            fs.Write(data, 0, data.Length);
+            fs.Flush();
+            fs.Close();
+
+            data = null;
+            fs = null;
         }
     }
 }

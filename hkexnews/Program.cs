@@ -7,6 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Infrastructure;
 using System.Linq;
+using System.Data;
+using hkexnews.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace hkexnews
 {
@@ -14,7 +18,11 @@ namespace hkexnews
     {
         static void Main(string[] args)
         {
+            GenerateExcelAll(2017,12);
 
+            Console.WriteLine("job done");
+
+            Console.ReadLine();
         }
 
         public static void SaveCurrentPage()
@@ -98,14 +106,103 @@ namespace hkexnews
             Console.ReadLine();
         }
 
+        public static void GenerateExcelAll(int year, int month)
+        {
+            var targetMonth = (month < 10 ? "0" + month : month.ToString()) + "/" + year.ToString();
+
+            var targetPath = AppDomain.CurrentDomain.BaseDirectory + DateTime.Now.ToFileTimeUtc() + ".xls";
+
+            DataSet set = new DataSet();
+
+            using (var db = new HKNewsContext())
+            {
+                var stockData = db.Records.OrderBy(p => p.Id).Where(P => P.Date.Contains(targetMonth)).GroupBy(p => p.Date).ToList();
+
+                foreach (var item in stockData)
+                {
+                    DataTable sourceTable = new DataTable(ConverToTableName(item.Key));
+
+                    sourceTable.Columns.Add("股票代号");
+                    sourceTable.Columns.Add("股份名称");
+                    sourceTable.Columns.Add("于中央结算系统的持股量");
+                    sourceTable.Columns.Add("占已发行股份百分比");
+
+                    foreach (var perStock in item)
+                    {
+                        var row = sourceTable.NewRow();
+
+                        row["股票代号"] = perStock.Code;
+                        row["股份名称"] = perStock.Stock_Name;
+                        row["于中央结算系统的持股量"] = perStock.Num;
+                        row["占已发行股份百分比"] = perStock.Rate;
+
+                        sourceTable.Rows.Add(row);
+                    }
+
+                    set.Tables.Add(sourceTable);
+                }
+
+                var excelStream = ExcelService.RenderDataSetToExcel(set);
+
+                ExcelService.WriteStreamToFile(ExcelService.StreamToByteArray(excelStream), targetPath);
+            }
+        }
+
+        public static string ConverToTableName(string str)
+        {
+            var array = str.Split("/");
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = array.Length - 1; i >= 0; i--)
+            {
+                sb.Append(array[i]);
+            }
+
+            return sb.ToString();
+
+        }
+
         public static void GenereateExcelByDay(DateTime date)
         {
+            var targetDate = date.ToString("dd/MM/yyyy");
+
+            var targetPath = AppDomain.CurrentDomain.BaseDirectory + date.ToString("yyyyMMdd") + DateTime.Now.ToFileTimeUtc() + ".xls";
+
+            using (var db = new HKNewsContext())
+            {
+                var stockData = db.Records.Where(p => p.Date == targetDate).OrderBy(p => p.Code).ToList();
+
+                DataTable sourceTable = new DataTable(date.ToString("yyyyMMdd"));
+
+                sourceTable.Columns.Add("股票代号");
+                sourceTable.Columns.Add("股份名称");
+                sourceTable.Columns.Add("于中央结算系统的持股量");
+                sourceTable.Columns.Add("占已发行股份百分比");
+
+                foreach (var item in stockData)
+                {
+                    var row = sourceTable.NewRow();
+
+                    row["股票代号"] = item.Code;
+                    row["股份名称"] = item.Stock_Name;
+                    row["于中央结算系统的持股量"] = item.Num;
+                    row["占已发行股份百分比"] = item.Rate;
+
+                    sourceTable.Rows.Add(row);
+                }
+
+                var excelStream = ExcelService.GenerateDayExcel(sourceTable);
+
+                ExcelService.WriteStreamToFile(ExcelService.StreamToByteArray(excelStream), targetPath);
+            }
+
 
         }
 
         public static void GenerateExcelByCode(string Code)
         {
-            
+
         }
 
         //TODO 实现每天自动抓取前一天的数据
