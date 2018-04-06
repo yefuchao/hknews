@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Infrastructure
 {
+    /// <summary>
+    /// Sql Server
+    /// </summary>
     class HKNewsContext : DbContext
     {
         public DbSet<Records> Records { get; set; }

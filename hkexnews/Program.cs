@@ -11,6 +11,8 @@ using System.Data;
 using hkexnews.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using hkexnews.Mysql;
+using hkexnews.Model;
 
 namespace hkexnews
 {
@@ -18,11 +20,30 @@ namespace hkexnews
     {
         static void Main(string[] args)
         {
-            GenerateExcelAll(2017,12);
+            SaveHistoryDataToMysql();
 
-            Console.WriteLine("job done");
+            Console.WriteLine("Job Done");
 
             Console.ReadLine();
+        }
+
+        public static void SaveDataToMysql()
+        {
+            List<DateSaved> records;
+
+            using (var sqlserver = new HKNewsContext())
+            {
+                records = sqlserver.DateSaved.ToList();
+            }
+
+            using (var mysql = new HkNewsContext())
+            {
+                mysql.Database.EnsureCreated();
+
+                mysql.DateSaved.AddRange(records);
+
+                mysql.SaveChanges();
+            }
         }
 
         public static void SaveCurrentPage()
@@ -37,7 +58,7 @@ namespace hkexnews
 
             var json = service.ConvertToJson(data.Item2, data.Item1);
 
-            using (var db = new HKNewsContext())
+            using (var db = new HkNewsContext())
             {
                 if (db.DateSaved.Where(p => p.Date == data.Item1).Count() == 0)
                 {
@@ -52,6 +73,58 @@ namespace hkexnews
             }
 
             Console.WriteLine(data.Item1 + "完成");
+        }
+
+        public static void SaveHistoryDataToMysql()
+        {
+            HTMLService service = new HTMLService();
+
+            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+
+            DateTime startDate = new DateTime(2018, 4, 3);
+
+            while (startDate.Date != DateTime.Now.Date)
+            {
+                var today = service.GetTodayPage(todayurl);
+
+                var data = service.GetStateAndValidation(today);
+
+                string _viewState = data.Item1;
+                string _eventvalidation = data.Item2;
+
+                service.GetHistoryPage(_viewState, _eventvalidation, startDate).ContinueWith((obj) =>
+                {
+                    var response = obj.Result;
+
+                    var r = service.GetStockData(response);
+
+                    var json = service.ConvertToJson(r.Item2, r.Item1);
+
+                    using (var db = new HkNewsContext())
+                    {
+                        if (db.DateSaved.Where(p => p.Date == r.Item1).Count() == 0)
+                        {
+                            var list = JsonConvert.DeserializeObject<List<Records>>(json);
+
+                            db.Records.AddRange(list);
+
+                            db.DateSaved.Add(new Model.DateSaved { Date = r.Item1 });
+
+                            db.SaveChanges();
+                        }
+                    }
+
+                    Console.WriteLine(data.Item1 + "完成");
+                });
+
+                Task.Delay(1000);
+
+                startDate = startDate.AddDays(1);
+            }
+
+            Console.WriteLine("done this date");
+
+            Console.ReadLine();
         }
 
         public static void SaveHistoryData()

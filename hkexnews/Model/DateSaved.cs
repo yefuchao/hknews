@@ -5,7 +5,7 @@ using System.Text;
 
 namespace hkexnews.Model
 {
-    class DateSaved
+    public class DateSaved
     {
         [Key]
         public int Id { get; set; }
