@@ -1,5 +1,7 @@
 ﻿using Dapper;
+using EventBus.Abstractions;
 using HKExNews.Background.Configuration;
+using HKExNews.Background.IntegrationEvents;
 using HKExNews.Background.Tasks.Base;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,9 +14,9 @@ namespace HKExNews.Background.Tasks
 {
     public class CheckStockDataStateService : BackgroundTask
     {
-        const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
         private readonly ILogger<CheckStockDataStateService> _logger;
         private readonly BackgroundTaskSettings _settings;
+        private readonly IEventBus _eventBus;
 
         public CheckStockDataStateService(IOptions<BackgroundTaskSettings> settings, ILogger<CheckStockDataStateService> logger)
         {
@@ -48,9 +50,13 @@ namespace HKExNews.Background.Tasks
 
             var lastday = GetLastDayStored();
 
-            if (lastday.Length > 0)
+            var yesterday = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
+
+            if (lastday != yesterday)
             {
-                //send event 
+                NoticeLastDayEvent notice = new NoticeLastDayEvent(lastday);
+
+                _eventBus.Publish(notice);
             }
         }
 

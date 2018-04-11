@@ -22,4 +22,10 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BuildingBlocks\EventBusRabbitMQ\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
+    <ProjectReference Include="..\HKExNews.Infrastructure\HKExNews.Infrastructure.csproj" />
+    <ProjectReference Include="..\Stock.Domain\HKExNews.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

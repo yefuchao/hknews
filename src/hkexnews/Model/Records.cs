@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Infrastructure
 {
-    public class Records
+    public class Records 
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
