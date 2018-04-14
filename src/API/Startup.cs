@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Application.IntegrationEvents;
 using API.Application.IntegrationEvents.Events;
 using API.Configuration;
 using API.Infrastructure.AutofacModules;
@@ -46,6 +47,8 @@ namespace API
                     .AllowAnyOrigin()
                     .AllowCredentials());
             });
+
+            services.AddTransient<IAPIIntegrationEventService, APIIntegrationEventService>();
 
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<HKExNewsContext>(options =>

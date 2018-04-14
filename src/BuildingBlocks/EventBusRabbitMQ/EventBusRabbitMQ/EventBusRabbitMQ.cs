@@ -73,6 +73,7 @@ namespace EventBusRabbitMQ
 
             var channel = _persistentConnection.CreateModel();
 
+            channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
             channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
             var consumer = new EventingBasicConsumer(channel);

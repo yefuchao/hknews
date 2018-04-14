@@ -18,9 +18,10 @@ namespace HKExNews.Background.Tasks
         private readonly BackgroundTaskSettings _settings;
         private readonly IEventBus _eventBus;
 
-        public CheckStockDataStateService(IOptions<BackgroundTaskSettings> settings, ILogger<CheckStockDataStateService> logger)
+        public CheckStockDataStateService(IOptions<BackgroundTaskSettings> settings, ILogger<CheckStockDataStateService> logger, IEventBus eventBus)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
         }
 
@@ -54,7 +55,7 @@ namespace HKExNews.Background.Tasks
 
             if (lastday != yesterday)
             {
-                NoticeLastDayEvent notice = new NoticeLastDayEvent(lastday);
+                NoticeLastDayEvent notice = new NoticeLastDayEvent(yesterday);
 
                 _eventBus.Publish(notice);
             }
