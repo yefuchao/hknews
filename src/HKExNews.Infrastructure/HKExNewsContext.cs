@@ -42,7 +42,8 @@ namespace HKExNews.Infrastructure
         public HKExNewsContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<HKExNewsContext>()
-                .UseSqlServer("Server=.;Initial Catalog=hknews;Integrated Security=true");
+                .UseMySql("server=.;database=hknews;");
+            //.UseSqlServer("Server=.;Initial Catalog=hknews;Integrated Security=true");
 
             return new HKExNewsContext(optionsBuilder.Options);
         }

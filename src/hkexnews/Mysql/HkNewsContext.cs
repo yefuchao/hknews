@@ -19,8 +19,7 @@ namespace hkexnews.Mysql
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("server=127.0.0.1;database=hknews;uid=root;pwd=your_password");
-            //base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseMySql("server=your_address;database=hknews;uid=yefuchao;pwd=your_password");
         }
     }
 }

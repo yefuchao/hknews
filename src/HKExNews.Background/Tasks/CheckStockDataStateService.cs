@@ -5,6 +5,7 @@ using HKExNews.Background.IntegrationEvents;
 using HKExNews.Background.Tasks.Base;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MySql.Data.MySqlClient;
 using System;
 using System.Data.SqlClient;
 using System.Threading;
@@ -55,7 +56,7 @@ namespace HKExNews.Background.Tasks
 
             if (lastday != yesterday)
             {
-                NoticeLastDayEvent notice = new NoticeLastDayEvent(yesterday);
+                NoticeLastDayEvent notice = new NoticeLastDayEvent(lastday);
 
                 _eventBus.Publish(notice);
             }
@@ -63,7 +64,7 @@ namespace HKExNews.Background.Tasks
 
         private string GetLastDayStored()
         {
-            using (var conn = new SqlConnection(_settings.ConnectionString))
+            using (var conn = new MySqlConnection(_settings.ConnectionString))
             {
                 try
                 {
@@ -79,13 +80,5 @@ namespace HKExNews.Background.Tasks
                 }
             }
         }
-
-
-
-
-
-
-
-
     }
 }

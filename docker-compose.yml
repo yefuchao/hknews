@@ -1,4 +1,4 @@
-version: '3'
+version: '1'
 
 services:
   api:
@@ -6,10 +6,4 @@ services:
     build:
       context: .
       dockerfile: API\Dockerfile
-
-  identity.api:
-    image: identity.api
-    build:
-      context: .
-      dockerfile: ..\Identity.API\Dockerfile
 

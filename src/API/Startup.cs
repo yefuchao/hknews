@@ -35,9 +35,9 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-
             services.Configure<APISettings>(Configuration);
+
+            services.AddCors();
 
             services.AddCors(options =>
             {
@@ -47,6 +47,8 @@ namespace API
                     .AllowAnyOrigin()
                     .AllowCredentials());
             });
+
+            services.AddMvc();
 
             services.AddTransient<IAPIIntegrationEventService, APIIntegrationEventService>();
 
@@ -76,6 +78,7 @@ namespace API
                 if (!string.IsNullOrEmpty(Configuration["EventBusPassword"]))
                 {
                     factory.Password = Configuration["EventBusPassword"];
+
                 }
 
                 var retryCount = 5;
@@ -142,7 +145,8 @@ namespace API
                 app.UsePathBase(pathBase);
             }
 
-            app.UseCors("CorsPolicy");
+            app.UseCors(options => options.WithOrigins("*").AllowAnyMethod());
+            //app.UseCors("CorsPolicy");
 
             if (env.IsDevelopment())
             {

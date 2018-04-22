@@ -1,5 +1,7 @@
 ﻿using API.Application.IntegrationEvents.Events;
+using Core;
 using EventBus.Abstractions;
+using HKExNews.Domain.AggregatesModel.StockAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,18 @@ namespace API.Application.IntegrationEvents.EventHandling
 {
     public class NoticeLastDayEventHandler : IIntegrationEventHandler<NoticeLastDayEvent>
     {
-        public Task Handle(NoticeLastDayEvent @event)
+        private OperateService _service;
+
+        public NoticeLastDayEventHandler(IStockRepository repository)
         {
-            throw new NotImplementedException();
+            _service = new OperateService(repository);
+        }
+
+        public async Task Handle(NoticeLastDayEvent @event)
+        {
+            DateTime.TryParse(@event.Date, out DateTime lastDate);
+
+            await _service.SaveData(lastDate);
         }
     }
 }

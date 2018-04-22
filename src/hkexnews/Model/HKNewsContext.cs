@@ -40,7 +40,7 @@ namespace Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-MI4FF793;Initial Catalog=hknews;User ID=sa;password=123456;");
+            optionsBuilder.UseSqlServer(@"Data Source=127.0.0.1;Initial Catalog=hknews;User ID=sa;password=your_password;");
         }
     }
 }

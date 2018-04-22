@@ -79,9 +79,9 @@ namespace hkexnews
         {
             HTMLService service = new HTMLService();
 
-            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket.aspx?t=hk";
 
-            DateTime startDate = new DateTime(2018, 4, 3);
+            DateTime startDate = new DateTime(2018, 1, 1);
 
             while (startDate.Date != DateTime.Now.Date)
             {
@@ -117,7 +117,7 @@ namespace hkexnews
                     Console.WriteLine(data.Item1 + "完成");
                 });
 
-                Task.Delay(1000);
+                Task.Delay(2000);
 
                 startDate = startDate.AddDays(1);
             }
@@ -131,9 +131,9 @@ namespace hkexnews
         {
             HTMLService service = new HTMLService();
 
-            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket.aspx?t=hk";
 
-            DateTime startDate = new DateTime(2017, 12, 12);
+            DateTime startDate = new DateTime(2018, 1, 1);
 
             while (startDate.Date != DateTime.Now.Date)
             {
@@ -166,10 +166,10 @@ namespace hkexnews
                         }
                     }
 
-                    Console.WriteLine(data.Item1 + "完成");
+                    Console.WriteLine(r.Item1 + "完成");
                 });
 
-                Task.Delay(1000);
+                Task.Delay(2000);
 
                 startDate = startDate.AddDays(1);
             }
@@ -278,8 +278,5 @@ namespace hkexnews
 
         }
 
-        //TODO 实现每天自动抓取前一天的数据
-        //TODO 订阅模式
-        //TODO 生成EXCEL，发送到订阅者邮箱
     }
 }

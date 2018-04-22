@@ -1,12 +1,7 @@
-version: '3'
+version: '1'
 
 services:
   api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "80"
-  identity.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:

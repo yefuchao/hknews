@@ -22,7 +22,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("")]
-        [ProducesResponseType(typeof(IEnumerable<StockItem>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(DayStockRateChart), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetStockByDay(string datestr = null)
 
@@ -35,12 +35,45 @@ namespace API.Controllers
 
                 var list = await _stockQueries.GetDayStockAsync(date);
 
-                return Ok(list);
+                var daystockRate = ConvertToStockRateChartData(list);
+
+                return Ok(daystockRate);
             }
             catch (Exception)
             {
                 return NotFound();
             }
+        }
+
+        private DayStockRateChart ConvertToStockRateChartData(IEnumerable<StockItem> stocks)
+        {
+            DayStockRateChart dayStockRate = new DayStockRateChart()
+            {
+                Seleted = new List<string>(),
+                Name = new List<string>(),
+                Rate = new List<double>()
+            };
+
+            if (stocks.Count() < 1)
+            {
+                return dayStockRate;
+            }
+
+            foreach (var item in stocks)
+            {
+                dayStockRate.Name.Add(item.Name);
+
+                var rate = item.Rate.Length > 0 ? Convert.ToDouble(item.Rate.Replace('%', ' ')) : 0;
+
+                if (rate > 10)
+                {
+                    dayStockRate.Seleted.Add(item.Name);
+                }
+
+                dayStockRate.Rate.Add(rate);
+            }
+
+            return dayStockRate;
         }
 
         [HttpGet]

@@ -19,6 +19,13 @@ namespace API.Application.Queries
         public string Amount { get; set; }
     }
 
+    public class DayStockRateChart
+    {
+        public List<string> Name { get; set; }
+        public List<double> Rate { get; set; }
+        public List<string> Seleted { get; set; }
+    }
+
     public class StockItem
     {
         public int Id { get; set; }

@@ -24,6 +24,7 @@ namespace Core
         static string _ddlShareholdingMonth = "04";
         static string _ddlShareholdingYear = "2017";
 
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -229,7 +230,7 @@ namespace Core
                     new KeyValuePair<string, string>("btnSearch.y",_y),
                 });
 
-                var result = await client.PostAsync("/sdw/search/mutualmarket_c.aspx?t=hk", content);
+                var result = await client.PostAsync("/sdw/search/mutualmarket.aspx?t=hk", content);
 
                 var response = await result.Content.ReadAsStreamAsync();
 

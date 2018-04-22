@@ -10,18 +10,18 @@ using MySql.Data.MySqlClient;
 
 namespace API.Application.Queries
 {
-    public class StockQueries : IStockQueries
+    public class StockQueries : BaseQueries, IStockQueries
     {
         private string _connectionString = string.Empty;
 
-        public StockQueries(string constr)
+        public StockQueries(string constr) : base(constr)
         {
             _connectionString = constr;
         }
 
         public async Task<IEnumerable<StockItem>> GetDayStockAsync(DateTime date)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = GetConnection())
             {
                 connection.Open();
 
@@ -37,7 +37,7 @@ namespace API.Application.Queries
 
         public async Task<IEnumerable<StockNameAndRate>> GetStockRateAsync(string code)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = GetConnection())
             {
                 connection.Open();
 
@@ -49,7 +49,7 @@ namespace API.Application.Queries
 
         public async Task<IEnumerable<StockNameAndAmount>> GetStockAmountAsync(string code)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using (var connection = GetConnection())
             {
                 connection.Open();
 
