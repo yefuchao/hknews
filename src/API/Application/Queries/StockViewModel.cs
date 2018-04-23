@@ -14,16 +14,32 @@ namespace API.Application.Queries
 
     public class StockNameAndAmount
     {
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
 
-        public string Amount { get; set; }
+        public Int64 Amount { get; set; }
+    }
+
+    public class StockDateAmountChart
+    {
+        public IList<string> Date { get; set; }
+        public IList<Int64> Amount { get; set; }
+        public string Title { get; set; }
     }
 
     public class DayStockRateChart
     {
         public List<string> Name { get; set; }
-        public List<double> Rate { get; set; }
-        public List<string> Seleted { get; set; }
+
+        public List<StockNameRateChart> SeriesData { get; set; }
+
+        public Dictionary<string,bool> Selected { get; set; }
+    }
+
+    public class StockNameRateChart
+    {
+        public string Name { get; set; }
+
+        public double Value { get; set; }
     }
 
     public class StockItem
@@ -34,8 +50,8 @@ namespace API.Application.Queries
 
         public string Name { get; set; }
 
-        public string Amount { get; set; }
+        public Int64 Amount { get; set; }
 
-        public string Rate { get; set; }
+        public Double Rate { get; set; }
     }
 }

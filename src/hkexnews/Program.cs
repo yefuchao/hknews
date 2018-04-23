@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using hkexnews.Mysql;
 using hkexnews.Model;
+using System.Globalization;
 
 namespace hkexnews
 {
@@ -20,11 +21,44 @@ namespace hkexnews
     {
         static void Main(string[] args)
         {
-            SaveHistoryDataToMysql();
+            SaveNames();
 
             Console.WriteLine("Job Done");
 
             Console.ReadLine();
+        }
+
+        public static void SaveNames()
+        {
+            HTMLService service = new HTMLService();
+
+            const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk";
+
+            var today = service.GetTodayPage(todayurl);
+
+            var data = service.GetStockData(today);
+
+            var date = DateTime.ParseExact(data.Item1, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            var json = service.ConvertToJson(data.Item2, date.ToString("yyyy/MM/dd"));
+
+            using (var db = new HkNewsContext())
+            {
+                var list = JsonConvert.DeserializeObject<List<Records>>(json);
+                var names = db.Names.ToList();
+                foreach (var item in list)
+                {
+                    if (names != null)
+                    {
+                        var name = names.Where(p => p.Code == item.Code).FirstOrDefault();
+                        name.CN = item.Stock_Name;
+                        db.Entry(name).State = EntityState.Modified;
+                    }
+                }
+
+                db.SaveChanges();
+            }
+            Console.Write("finish");
         }
 
         public static void SaveDataToMysql()
@@ -56,6 +90,8 @@ namespace hkexnews
 
             var data = service.GetStockData(today);
 
+            var date = Convert.ToDateTime(data.Item1);
+
             var json = service.ConvertToJson(data.Item2, data.Item1);
 
             using (var db = new HkNewsContext())
@@ -81,7 +117,7 @@ namespace hkexnews
 
             const string todayurl = @"http://www.hkexnews.hk/sdw/search/mutualmarket.aspx?t=hk";
 
-            DateTime startDate = new DateTime(2018, 1, 1);
+            DateTime startDate = new DateTime(2018, 3, 3);
 
             while (startDate.Date != DateTime.Now.Date)
             {
@@ -98,7 +134,9 @@ namespace hkexnews
 
                     var r = service.GetStockData(response);
 
-                    var json = service.ConvertToJson(r.Item2, r.Item1);
+                    var date = DateTime.ParseExact(r.Item1, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                    var json = service.ConvertToJson(r.Item2, date.ToString());
 
                     using (var db = new HkNewsContext())
                     {
@@ -108,13 +146,13 @@ namespace hkexnews
 
                             db.Records.AddRange(list);
 
-                            db.DateSaved.Add(new Model.DateSaved { Date = r.Item1 });
+                            db.DateSaved.Add(new DateSaved { Date = r.Item1 });
 
                             db.SaveChanges();
                         }
                     }
 
-                    Console.WriteLine(data.Item1 + "完成");
+                    Console.WriteLine(r.Item1 + "完成");
                 });
 
                 Task.Delay(2000);
@@ -150,6 +188,8 @@ namespace hkexnews
 
                     var r = service.GetStockData(response);
 
+                    var date = Convert.ToDateTime(r.Item1);
+
                     var json = service.ConvertToJson(r.Item2, r.Item1);
 
                     using (var db = new HKNewsContext())
@@ -160,7 +200,7 @@ namespace hkexnews
 
                             db.Records.AddRange(list);
 
-                            db.DateSaved.Add(new Model.DateSaved { Date = r.Item1 });
+                            db.DateSaved.Add(new DateSaved { Date = r.Item1 });
 
                             db.SaveChanges();
                         }
@@ -179,47 +219,47 @@ namespace hkexnews
             Console.ReadLine();
         }
 
-        public static void GenerateExcelAll(int year, int month)
-        {
-            var targetMonth = (month < 10 ? "0" + month : month.ToString()) + "/" + year.ToString();
+        //public static void GenerateExcelAll(int year, int month)
+        //{
+        //    var targetMonth = (month < 10 ? "0" + month : month.ToString()) + "/" + year.ToString();
 
-            var targetPath = AppDomain.CurrentDomain.BaseDirectory + DateTime.Now.ToFileTimeUtc() + ".xls";
+        //    var targetPath = AppDomain.CurrentDomain.BaseDirectory + DateTime.Now.ToFileTimeUtc() + ".xls";
 
-            DataSet set = new DataSet();
+        //    DataSet set = new DataSet();
 
-            using (var db = new HKNewsContext())
-            {
-                var stockData = db.Records.OrderBy(p => p.Id).Where(P => P.Date.Contains(targetMonth)).GroupBy(p => p.Date).ToList();
+        //    using (var db = new HKNewsContext())
+        //    {
+        //        var stockData = db.Records.OrderBy(p => p.Id).Where(P => P.Date.Contains(targetMonth)).GroupBy(p => p.Date).ToList();
 
-                foreach (var item in stockData)
-                {
-                    DataTable sourceTable = new DataTable(ConverToTableName(item.Key));
+        //        foreach (var item in stockData)
+        //        {
+        //            DataTable sourceTable = new DataTable(ConverToTableName(item.Key));
 
-                    sourceTable.Columns.Add("股票代号");
-                    sourceTable.Columns.Add("股份名称");
-                    sourceTable.Columns.Add("于中央结算系统的持股量");
-                    sourceTable.Columns.Add("占已发行股份百分比");
+        //            sourceTable.Columns.Add("股票代号");
+        //            sourceTable.Columns.Add("股份名称");
+        //            sourceTable.Columns.Add("于中央结算系统的持股量");
+        //            sourceTable.Columns.Add("占已发行股份百分比");
 
-                    foreach (var perStock in item)
-                    {
-                        var row = sourceTable.NewRow();
+        //            foreach (var perStock in item)
+        //            {
+        //                var row = sourceTable.NewRow();
 
-                        row["股票代号"] = perStock.Code;
-                        row["股份名称"] = perStock.Stock_Name;
-                        row["于中央结算系统的持股量"] = perStock.Num;
-                        row["占已发行股份百分比"] = perStock.Rate;
+        //                row["股票代号"] = perStock.Code;
+        //                row["股份名称"] = perStock.Stock_Name;
+        //                row["于中央结算系统的持股量"] = perStock.Num;
+        //                row["占已发行股份百分比"] = perStock.Rate;
 
-                        sourceTable.Rows.Add(row);
-                    }
+        //                sourceTable.Rows.Add(row);
+        //            }
 
-                    set.Tables.Add(sourceTable);
-                }
+        //            set.Tables.Add(sourceTable);
+        //        }
 
-                var excelStream = ExcelService.RenderDataSetToExcel(set);
+        //        var excelStream = ExcelService.RenderDataSetToExcel(set);
 
-                ExcelService.WriteStreamToFile(ExcelService.StreamToByteArray(excelStream), targetPath);
-            }
-        }
+        //        ExcelService.WriteStreamToFile(ExcelService.StreamToByteArray(excelStream), targetPath);
+        //    }
+        //}
 
         public static string ConverToTableName(string str)
         {
@@ -238,13 +278,13 @@ namespace hkexnews
 
         public static void GenereateExcelByDay(DateTime date)
         {
-            var targetDate = date.ToString("dd/MM/yyyy");
+            //var targetDate = date.ToString("dd/MM/yyyy");
 
             var targetPath = AppDomain.CurrentDomain.BaseDirectory + date.ToString("yyyyMMdd") + DateTime.Now.ToFileTimeUtc() + ".xls";
 
             using (var db = new HKNewsContext())
             {
-                var stockData = db.Records.Where(p => p.Date == targetDate).OrderBy(p => p.Code).ToList();
+                var stockData = db.Records.Where(p => p.Date == date).OrderBy(p => p.Code).ToList();
 
                 DataTable sourceTable = new DataTable(date.ToString("yyyyMMdd"));
 

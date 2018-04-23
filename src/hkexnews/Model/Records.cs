@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Infrastructure
 {
-    public class Records 
+    public class Records
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,10 +16,10 @@ namespace Infrastructure
 
         public string Stock_Name { get; set; }
 
-        public string Num { get; set; }
+        public Int64 Num { get; set; }
 
-        public string Rate { get; set; }
+        public double Rate { get; set; }
 
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-version: '1'
+version: '3'
 
 services:
   api:
@@ -6,8 +6,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "80"
-networks:
-  default:
-    external:
-      name: nat
+
+  hkexnews.background:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
 

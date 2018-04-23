@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HKExNews.Domain", "src\Stoc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HKExNews.Infrastructure", "src\HKExNews.Infrastructure\HKExNews.Infrastructure.csproj", "{78170AEE-522C-4160-AD3A-B5F0F01D7AAB}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{635FFAFE-3C13-4AC9-97DD-78C4B1E23A97}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{95591FB5-02F9-40DF-9CCE-7273307A5325}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,10 +69,10 @@ Global
 		{78170AEE-522C-4160-AD3A-B5F0F01D7AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78170AEE-522C-4160-AD3A-B5F0F01D7AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78170AEE-522C-4160-AD3A-B5F0F01D7AAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{635FFAFE-3C13-4AC9-97DD-78C4B1E23A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{635FFAFE-3C13-4AC9-97DD-78C4B1E23A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{635FFAFE-3C13-4AC9-97DD-78C4B1E23A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{635FFAFE-3C13-4AC9-97DD-78C4B1E23A97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95591FB5-02F9-40DF-9CCE-7273307A5325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95591FB5-02F9-40DF-9CCE-7273307A5325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95591FB5-02F9-40DF-9CCE-7273307A5325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95591FB5-02F9-40DF-9CCE-7273307A5325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

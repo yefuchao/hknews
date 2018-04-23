@@ -25,7 +25,6 @@ namespace API.Controllers
         [ProducesResponseType(typeof(DayStockRateChart), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetStockByDay(string datestr = null)
-
         {
             try
             {
@@ -33,7 +32,7 @@ namespace API.Controllers
 
                 date = DateTime.MinValue == date ? new DateTime(2018, 03, 29) : date;
 
-                var list = await _stockQueries.GetDayStockAsync(date);
+                var list = await _stockQueries.GetStockNameAmount(date);
 
                 var daystockRate = ConvertToStockRateChartData(list);
 
@@ -45,40 +44,37 @@ namespace API.Controllers
             }
         }
 
-        private DayStockRateChart ConvertToStockRateChartData(IEnumerable<StockItem> stocks)
+        private DayStockRateChart ConvertToStockRateChartData(IEnumerable<StockNameRateChart> stocks)
         {
             DayStockRateChart dayStockRate = new DayStockRateChart()
             {
-                Seleted = new List<string>(),
+                Selected = new Dictionary<string, bool>(),
                 Name = new List<string>(),
-                Rate = new List<double>()
+                SeriesData = stocks.ToList()
             };
+
+            List<string> name = new List<string>();
 
             if (stocks.Count() < 1)
             {
                 return dayStockRate;
+
             }
 
             foreach (var item in stocks)
             {
-                dayStockRate.Name.Add(item.Name);
-
-                var rate = item.Rate.Length > 0 ? Convert.ToDouble(item.Rate.Replace('%', ' ')) : 0;
-
-                if (rate > 10)
-                {
-                    dayStockRate.Seleted.Add(item.Name);
-                }
-
-                dayStockRate.Rate.Add(rate);
+                name.Add(item.Name);
+                dayStockRate.Selected.Add(item.Name, item.Value >= 20);
             }
+
+            dayStockRate.Name = name;
 
             return dayStockRate;
         }
 
         [HttpGet]
         [Route("amount/{code}")]
-        [ProducesResponseType(typeof(IEnumerable<StockNameAndAmount>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(StockDateAmountChart), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetStockNameAndAmount(string code)
         {
@@ -86,7 +82,22 @@ namespace API.Controllers
             {
                 var list = await _stockQueries.GetStockAmountAsync(code);
 
-                return Ok(list);
+                var title = await _stockQueries.GetStockName(code);
+
+                var stockDateAmountChart = new StockDateAmountChart()
+                {
+                    Amount = new List<Int64>(),
+                    Date = new List<string>(),
+                    Title = title
+                };
+
+                foreach (var item in list)
+                {
+                    stockDateAmountChart.Date.Add(item.Date.ToString("yyyy/MM/dd"));
+                    stockDateAmountChart.Amount.Add(item.Amount);
+                }
+
+                return Ok(stockDateAmountChart);
 
             }
             catch (Exception)

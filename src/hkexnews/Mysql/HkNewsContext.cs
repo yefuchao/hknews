@@ -17,9 +17,11 @@ namespace hkexnews.Mysql
 
         public DbSet<DateSaved> DateSaved { get; set; }
 
+        public DbSet<Names> Names { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql("server=your_address;database=hknews;uid=yefuchao;pwd=your_password");
+            optionsBuilder.UseMySql("server=207.148.115.130;database=hknews;uid=yefuchao;pwd=eWVmdWNoYW8=");
         }
     }
 }

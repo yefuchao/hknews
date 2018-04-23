@@ -13,13 +13,13 @@ namespace HKExNews.Domain.AggregatesModel.StockAggregate
 
         public string Stock_Name { get; private set; }
 
-        public string Num { get; private set; }
+        public Int64 Num { get; private set; }
 
-        public string Rate { get; private set; }
+        public double Rate { get; private set; }
 
-        public string Date { get; private set; }
+        public DateTime Date { get; private set; }
 
-        public Records(string code, string stockName, string num, string rate, string date)
+        public Records(string code, string stockName, Int64 num, double rate, DateTime date)
         {
             Code = code ?? throw new ArgumentNullException(nameof(code));
             Stock_Name = stockName;

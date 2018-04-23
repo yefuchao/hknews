@@ -158,8 +158,9 @@ namespace Core
                 sb.Append("{");
                 sb.Append("Code:\"" + Regex.Replace(array[index], "\\s", "") + "\",");
                 sb.Append("Stock_Name:\"" + Regex.Replace(array[index + 1], "\\s", "") + "\",");
-                sb.Append("Num:\"" + Regex.Replace(Regex.Replace(array[index + 2], "\\s", ""), ",", "") + "\",");
-                sb.Append("Rate:\"" + Regex.Replace(array[index + 3], "\\s", "") + "\",");
+                sb.Append("Num:" + Regex.Replace(Regex.Replace(array[index + 2], "\\s", ""), ",", "") + ",");
+                var rate = Regex.Replace(array[index + 3].Replace('%', ' '), "\\s", "").Length > 0 ? Regex.Replace(array[index + 3].Replace('%', ' '), "\\s", "") : "0";
+                sb.Append("Rate:\"" + rate + "\", ");
                 sb.Append("Date:\"" + date + "\"");
                 sb.Append("}");
 

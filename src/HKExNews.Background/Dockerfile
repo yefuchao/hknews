@@ -1,16 +1,22 @@
-FROM microsoft/aspnetcore-build:latest AS build-env
+FROM microsoft/aspnetcore:2.0 AS base
 WORKDIR /app
+EXPOSE 80
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
+FROM microsoft/aspnetcore-build:2.0 AS build
+WORKDIR /src
+COPY *.sln ./
+COPY src/HKExNews.Background/HKExNews.Background.csproj src/HKExNews.Background/
+COPY src/BuildingBlocks/EventBusRabbitMQ/EventBusRabbitMQ/EventBusRabbitMQ.csproj src/BuildingBlocks/EventBusRabbitMQ/EventBusRabbitMQ/
+COPY src/BuildingBlocks/EventBus/EventBus/EventBus.csproj src/BuildingBlocks/EventBus/EventBus/
 RUN dotnet restore
+COPY . .
+WORKDIR /src/src/HKExNews.Background
+RUN dotnet build -c Release -o /app
 
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+FROM build AS publish
+RUN dotnet publish -c Release -o /app
 
-# Build runtime image
-FROM microsoft/aspnetcore:latest
+FROM base AS final
 WORKDIR /app
-COPY --from=build-env /app/out .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "HKExNews.Background.dll"]

@@ -2,12 +2,11 @@
 <Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.0</ProjectVersion>
-    <DockerTargetOS>Windows</DockerTargetOS>
-    <ProjectGuid>635ffafe-3c13-4ac9-97dd-78c4b1e23a97</ProjectGuid>
+    <DockerTargetOS>Linux</DockerTargetOS>
+    <ProjectGuid>95591fb5-02f9-40df-9cce-7273307a5325</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
-    <DockerServiceUrl>http://{ServiceIPAddress}/api/values</DockerServiceUrl>
+    <DockerServiceUrl>http://localhost:{ServicePort}/api/values</DockerServiceUrl>
     <DockerServiceName>api</DockerServiceName>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
@@ -15,5 +14,6 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="docker-compose.ci.build.yml" />
   </ItemGroup>
 </Project>

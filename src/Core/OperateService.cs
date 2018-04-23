@@ -3,6 +3,7 @@ using HKExNews.Domain.AggregatesModel.StockAggregate;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,9 @@ namespace Core
                 {
                     var response = obj.Result;
                     var stockData = _Html.GetStockData(response);
-                    var json = _Html.ConvertToJson(stockData.Item2, stockData.Item1);
+
+                    var date = DateTime.ParseExact(stockData.Item1, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    var json = _Html.ConvertToJson(stockData.Item2, date.ToString());
 
                     if (!_repository.IsExist(stockData.Item1))
                     {

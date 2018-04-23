@@ -52,15 +52,23 @@ namespace API
 
             services.AddTransient<IAPIIntegrationEventService, APIIntegrationEventService>();
 
-            services.AddEntityFrameworkSqlServer()
-                .AddDbContext<HKExNewsContext>(options =>
-                {
-                    options.UseSqlServer(Configuration["ConnectionString"],
-                        sqlServerOptionsAction: sqlOptions =>
-                        {
-                            sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                        });
-                }, ServiceLifetime.Scoped);
+            services.AddEntityFrameworkMySql().AddDbContext<HKExNewsContext>(options =>
+            {
+                options.UseMySql(Configuration["ConnectionString"], mySqlOptionsAction: sqlOptions =>
+                  {
+                      sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                  });
+            }, ServiceLifetime.Scoped);
+
+            //services.AddEntityFrameworkSqlServer()
+            //    .AddDbContext<HKExNewsContext>(options =>
+            //    {
+            //        options.UseSqlServer(Configuration["ConnectionString"],
+            //            sqlServerOptionsAction: sqlOptions =>
+            //            {
+            //                sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+            //            });
+            //    }, ServiceLifetime.Scoped);
 
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {

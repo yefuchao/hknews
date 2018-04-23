@@ -27,9 +27,9 @@ namespace API.Application.Queries
 
                 var sql = "select Id,Code,Stock_Name as Name ,Num as Amount,Rate from Records where Date = @date order by Code";
 
-                var queryDate = ConvertDateString(date);
+                //var queryDate = ConvertDateString(date);
 
-                var result = await connection.QueryAsync<StockItem>(sql, new { date = queryDate });
+                var result = await connection.QueryAsync<StockItem>(sql, new { date });
 
                 return result;
             }
@@ -41,7 +41,7 @@ namespace API.Application.Queries
             {
                 connection.Open();
 
-                var sql = "select Date ,Rate from Records where Code = @code order by Id";
+                var sql = "select Date ,Rate from Records where Code = @code order by Date";
 
                 return await connection.QueryAsync<StockNameAndRate>(sql, new { code });
             }
@@ -53,7 +53,7 @@ namespace API.Application.Queries
             {
                 connection.Open();
 
-                var sql = "select Date ,Num as Amount from Records where Code = @code order by Id";
+                var sql = "select Date,Num as Amount from Records where Code = @code order by Date";
 
                 var result = await connection.QueryAsync<StockNameAndAmount>(sql, new { code });
 
@@ -69,5 +69,32 @@ namespace API.Application.Queries
             return day + "/" + month + "/" + year;
         }
 
+        public async Task<string> GetStockName(string code)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+
+                var sql = "select distinct Stock_Name from Records where Code = @code ";
+
+                var result = await connection.QuerySingleAsync<string>(sql, new { code });
+
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<StockNameRateChart>> GetStockNameAmount(DateTime date)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+
+                var sql = "select Stock_Name as Name ,Rate as Value from Records where Date = @date order by Code";
+
+                var result = await connection.QueryAsync<StockNameRateChart>(sql, new { date });
+
+                return result;
+            }
+        }
     }
 }

@@ -13,5 +13,8 @@ namespace API.Application.Queries
 
         Task<IEnumerable<StockItem>> GetDayStockAsync(DateTime date);
 
+        Task<string> GetStockName(string code);
+
+        Task<IEnumerable<StockNameRateChart>> GetStockNameAmount(DateTime date);
     }
 }

@@ -1,9 +1,15 @@
-version: '1'
+version: '3'
 
 services:
   api:
     image: api
     build:
       context: .
-      dockerfile: API\Dockerfile
+      dockerfile: src/API/Dockerfile
+
+  hkexnews.background:
+    image: hkexnews.background
+    build:
+      context: .
+      dockerfile: src/HKExNews.Background/Dockerfile
 
