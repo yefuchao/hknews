@@ -20,9 +20,7 @@ namespace API.Application.IntegrationEvents.EventHandling
 
         public async Task Handle(NoticeLastDayEvent @event)
         {
-            DateTime.TryParse(@event.Date, out DateTime lastDate);
-
-            await _service.SaveData(lastDate);
+            await _service.SaveData(@event.Date);
         }
     }
 }

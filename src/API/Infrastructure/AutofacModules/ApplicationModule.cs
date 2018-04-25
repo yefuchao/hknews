@@ -8,6 +8,8 @@ using API.Application.IntegrationEvents.Events;
 using API.Application.Queries;
 using Autofac;
 using EventBus.Abstractions;
+using HKExNews.Domain.AggregatesModel.StockAggregate;
+using HKExNews.Infrastructure.Repositories;
 
 namespace API.Infrastructure.AutofacModules
 {
@@ -26,7 +28,11 @@ namespace API.Infrastructure.AutofacModules
                 .As<IStockQueries>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterAssemblyTypes(typeof(NoticeLastDayEventHandler).GetTypeInfo().Assembly).AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
+            builder.RegisterType<StockRepository>().As<IStockRepository>().InstancePerLifetimeScope();
+
+            builder.Register(c => new NoticeLastDayEventHandler(c.Resolve<IStockRepository>())).As<IIntegrationEventHandler<NoticeLastDayEvent>>().InstancePerLifetimeScope();
+
+            //builder.RegisterAssemblyTypes(typeof(NoticeLastDayEventHandler).GetTypeInfo().Assembly).AsClosedTypesOf(typeof(IIntegrationEventHandler<>));
         }
     }
 }

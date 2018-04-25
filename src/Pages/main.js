@@ -11,7 +11,7 @@ function pageLoad() {
         tooltip: {
             trigger: 'axis',
             position: function (pt) {
-                return [pt[0], '10%'];
+                return [pt[0], '50%'];
             }
         },
         title: {
@@ -85,7 +85,7 @@ function pageLoad() {
 }
 
 function getData(code) {
-    $.getJSON("http://localhost:56110/api/stock/amount/" + code, function (data) {
+    $.getJSON("http://stockapi.yefuchao.info/api/stock/amount/" + code, function (data) {
         Chartdata.date = data.date;
         Chartdata.amount = data.amount;
         Chartdata.title = data.title;

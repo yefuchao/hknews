@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using System;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,9 +55,11 @@ namespace HKExNews.Background.Tasks
 
             var yesterday = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy");
 
-            if (lastday != yesterday)
+            if (lastday != yesterday && lastday != "")
             {
-                NoticeLastDayEvent notice = new NoticeLastDayEvent(lastday);
+                var date = DateTime.ParseExact(lastday, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                NoticeLastDayEvent notice = new NoticeLastDayEvent(date);
 
                 _eventBus.Publish(notice);
             }
@@ -69,7 +72,7 @@ namespace HKExNews.Background.Tasks
                 try
                 {
                     conn.Open();
-                    var conmand = "select TOP 1 Date from DateSaved order by Id desc";
+                    var conmand = "select Date from DateSaved order by Id desc LIMIT 1";
                     var date = conn.QueryFirst<string>(conmand);
                     return date;
                 }

@@ -8,8 +8,8 @@ namespace HKExNews.Background.IntegrationEvents
 {
     public class NoticeLastDayEvent : IntegrationEvent
     {
-        public string Date { get; }
+        public DateTime Date { get; }
 
-        public NoticeLastDayEvent(string lastDay) => Date = lastDay;
+        public NoticeLastDayEvent(DateTime lastDay) => Date = lastDay;
     }
 }
