@@ -8,7 +8,8 @@ namespace API.Application.IntegrationEvents.Events
 {
     public class NoticeLastDayEvent : IntegrationEvent
     {
-        public DateTime Date { get; }
+        //Question:需要set，否则JsonConvert.DeserializeObject无法赋值
+        public DateTime Date { get; set; }
 
         public NoticeLastDayEvent(DateTime lastDay) => Date = lastDay;
     }
